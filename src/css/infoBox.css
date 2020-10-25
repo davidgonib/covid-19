@@ -1,0 +1,12 @@
+.infoBox {
+    cursor: pointer;
+}
+.infoBox:hover {
+    background-color: #e8e8e8;
+}
+.currentCases {
+    font-size: 2rem;
+}
+.increasePercentCases, .previousCases {
+    font-size: .9rem;
+}
