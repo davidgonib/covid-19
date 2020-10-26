@@ -21,5 +21,9 @@ export const formatData = date => {
 
         return sentenceDate + ' ' + numTime; 
     }
-   
+};
+
+export const sortData = (data) => {
+    const sortedData = [...data];
+    return sortedData.sort((a,b) => a.latest_data.confirmed > b.latest_data.confirmed ? -1 : 1);
 };

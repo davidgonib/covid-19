@@ -1,0 +1,36 @@
+
+
+@media (min-width: 769px) {  
+    .dataTable {
+        height: 1000px;
+        overflow: auto;
+        display: grid;
+        font-size: .8rem; 
+    }
+}
+@media (min-width: 1200px ) {  
+    .dataTable {
+        height: 300px;
+    }
+}
+
+@media (max-width: 768px) {  
+    .dataTable {
+        height: 400px;
+        overflow: auto;
+        display: grid;
+        font-size: .8rem; 
+    }
+}
+
+
+  .dataTable td {
+    padding: .5rem;
+  }
+  .dataTable tr {
+    display: flex;
+    justify-content: space-between;
+  }
+
+
+ 
