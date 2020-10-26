@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react'
 
 import InfoBox from '../components/InfoBox';
 import LineGraph from '../components/LineGraph';
+import TableCountries from '../components/TableCountries';
 import { Container, Row, Col, Form, InputGroup } from 'react-bootstrap';
-import { formatData } from '../util';
+import { formatData, sortData } from '../util';
 import '../css/homeScreen.css';
 import numeral from 'numeral';
 
@@ -17,6 +18,7 @@ function HomeScreen () {
     const [currentCountryInfo, setCurrentCountryInfo] = useState({});
     const [typeData, setTypeData] = useState('acumulado');
     const [typeCases, setTypeCases] = useState('confirmed');
+    const [dataTable, setDataTable] = useState([]);
 
     // Obtención de los datos globales
     useEffect(() => {
@@ -47,6 +49,8 @@ function HomeScreen () {
                     } 
                 ));
                 setCountries(countries);
+                const sortedData = sortData(data.data);
+                setDataTable(sortedData)
             })
         }
         getCountriesData(); 
@@ -147,7 +151,7 @@ function HomeScreen () {
                     <p className="text-dark text-center my-0">{date}</p>
                 </Col>
             </Row>
-            <Row className="justify-content-sm-center align-items-md-center mx-0 mx-md-0 my-3">
+            <Row className="justify-content-sm-center align-items-md-start mx-0 mx-md-0 my-3">
                 <Col xs={12} md={6} xl={12} className="order-0 px-0">
                     <Row className="mx-0">
                         <Col className="d-flex flex-column justify-content-xl-around flex-xl-row px-0">
@@ -160,8 +164,10 @@ function HomeScreen () {
                                             currentCases={numeral(currentCountryInfo.confirmed).format("0,0")}
                                             previousCases={numeral(previousCountryInfo.confirmed).format("0,0")}
                                             increasePercentCases={numeral((currentCountryInfo.confirmed - previousCountryInfo.confirmed) / previousCountryInfo.confirmed).format("0.0%")}
-                                            onClick={(e) => console.log('confirmed')}                                                                         
-                                        />    
+                                            onClick={(e) => (
+                                                setTypeCases('confirmed')
+                                            )}                                                                         
+                                        />   
                                        <LineGraph
                                             data={countryInfo}
                                             typeCases="confirmed"
@@ -174,7 +180,7 @@ function HomeScreen () {
                                             currentCases={numeral(currentCountryInfo.new_confirmed).format("0,0")}
                                             previousCases={numeral(previousCountryInfo.new_confirmed).format("0,0")}
                                             increasePercentCases={numeral((currentCountryInfo.new_confirmed - previousCountryInfo.new_confirmed) / previousCountryInfo.new_confirmed).format("0.0%")}
-                                            onClick={(e) => console.log('confirmed')}     
+                                            onClick={(e) => setTypeCases('confirmed')}     
                                         /> 
                                        <LineGraph
                                             data={countryInfo}
@@ -193,7 +199,7 @@ function HomeScreen () {
                                             currentCases={numeral(currentCountryInfo.recovered).format("0,0")}
                                             previousCases={numeral(previousCountryInfo.recovered).format("0,0")}
                                             increasePercentCases={numeral((currentCountryInfo.recovered - previousCountryInfo.recovered) / previousCountryInfo.recovered).format("0.0%")}
-                                            onClick={(e) => console.log('recovered')}                                                                         
+                                            onClick={(e) => setTypeCases('recovered')}                                                           
                                         />   
                                         <LineGraph
                                             data={countryInfo}
@@ -207,7 +213,7 @@ function HomeScreen () {
                                             currentCases={numeral(currentCountryInfo.new_recovered).format("0,0")}
                                             previousCases={numeral(previousCountryInfo.new_recovered).format("0,0")}
                                             increasePercentCases={numeral((currentCountryInfo.new_recovered - previousCountryInfo.new_recovered) / previousCountryInfo.new_recovered).format("0.0%")}
-                                            onClick={(e) => console.log('recovered')}     
+                                            onClick={(e) => setTypeCases('recovered')}   
                                         />  
                                         <LineGraph
                                             data={countryInfo}
@@ -227,7 +233,7 @@ function HomeScreen () {
                                             currentCases={numeral(currentCountryInfo.deaths).format("0,0")}
                                             previousCases={numeral(previousCountryInfo.deaths).format("0,0")}
                                             increasePercentCases={numeral((currentCountryInfo.deaths - previousCountryInfo.deaths) / previousCountryInfo.deaths).format("0.0%")}
-                                            onClick={(e) => console.log('deaths')}                                                                         
+                                            onClick={(e) => setTypeCases('deaths')}                                                                        
                                         />
                                         <LineGraph
                                             data={countryInfo}
@@ -241,11 +247,11 @@ function HomeScreen () {
                                             currentCases={numeral(currentCountryInfo.new_deaths).format("0,0")}
                                             previousCases={numeral(previousCountryInfo.new_deaths).format("0,0")}
                                             increasePercentCases={numeral((currentCountryInfo.new_deaths - previousCountryInfo.new_deaths) / previousCountryInfo.new_deaths).format("0.0%")}
-                                            onClick={(e) => console.log('deaths')}     
+                                            onClick={(e) => setTypeCases('deaths')}     
                                         /> 
                                         <LineGraph
                                             data={countryInfo}
-                                            typeCases="deaths"
+                                            typeCases="new_deaths"
                                         />
                                     </div>  
                                 }
@@ -255,7 +261,18 @@ function HomeScreen () {
                     </Row>
                 </Col>
                 <Col xs={12} xl={8} className="map order-1 order-md-2 order-xl-1 px-0">Mapa</Col>
-                <Col xs={12} md={6} xl={4} className="tabla order-2 order-md-1 order-xl-2 px-0">Tabla</Col>
+                <Col xs={12} md={6} xl={4} className="tabla order-2 order-md-1 order-xl-2 px-0">
+                    <Row className="d-flex flex-column align-self-start align mx-0">
+                        { ((typeCases === 'confirmed') && <h5 className="text-center mt-3 mt-md-0">Casos Positivos Acumulados</h5>)
+                          || ((typeCases === 'recovered') && <h5 className="text-center mt-3 mt-md-0">Casos Recuperados Acumulados</h5>)
+                          ||  <h5 className="text-center mt-3 mt-md-0">Casos Fallecidos Acumulados</h5>
+                        }                       
+                        <TableCountries 
+                            typeCases={typeCases}
+                            countries={dataTable} 
+                        />
+                    </Row>
+                </Col>
             </Row>
         </Container>
     )

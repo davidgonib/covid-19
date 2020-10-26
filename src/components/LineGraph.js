@@ -1,4 +1,4 @@
-import React, { setState } from 'react'
+import React from 'react';
 import { Line } from 'react-chartjs-2';
 import numeral from 'numeral';
 
