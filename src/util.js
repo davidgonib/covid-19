@@ -1,4 +1,25 @@
+import React from 'react';
+import moment from 'moment';
+import numeral from 'numeral';
+import { Circle, Popup } from 'react-leaflet';
 
+const casesTypeColors = {
+    confirmed: {
+        hex: "#CC1034",
+        rgb: "rgb(204, 16, 52)",
+        multiplier: 800
+    },
+    recovered: {
+        hex: "#7dd71d",
+        rgb: "rgb(125, 215, 29)",
+        multiplier: 1200
+    },
+    deaths: {
+        hex: "#000",
+        rgb: "rgb(165, 165, 165)",
+        multiplier: 2000
+    }
+};
 
 //Formatear una fecha
 export const formatData = date => {
@@ -27,3 +48,43 @@ export const sortData = (data) => {
     const sortedData = [...data];
     return sortedData.sort((a,b) => a.latest_data.confirmed > b.latest_data.confirmed ? -1 : 1);
 };
+
+export const getDays = (currentDate, previousDate) => {
+
+    const currentDateMoment = moment(currentDate);  
+    const previousDateMoment = moment(previousDate);
+
+    const numberDays = currentDateMoment.diff(previousDateMoment, 'days');
+
+    return numberDays;
+}
+
+// Limpiar los paises con coordenadas igual a 0.
+export const cleanMapData = data => {
+    const dataCleaned = data.filter(country => (country.longitude !== 0 && country.longitude !== null))
+    return dataCleaned
+}
+
+// Dibujar círculos en el mapa 
+export const showDataOnMap = (data, typeCases='confirmed') => (
+    data.map(country => (
+        <Circle
+             center={[country.latitude, country.longitude]}
+             fillOpacity={0.4}
+             color={casesTypeColors[typeCases].hex}
+             fillColor={casesTypeColors[typeCases].hex}
+             radius={
+                 Math.sqrt(country[typeCases])* casesTypeColors[typeCases].multiplier
+             }
+         >
+             <Popup>
+                 <div className="">
+                     <div>{country.name}</div>
+                     <div className="">Cases: {numeral(country.confirmed).format("0,0")}</div>
+                     <div className="">Recovered: {numeral(country.recovered).format("0,0")}</div>
+                     <div className="">Deaths: {numeral(country.deaths).format("0,0")}</div>
+                 </div>
+             </Popup>
+         </Circle>     
+    ))
+);

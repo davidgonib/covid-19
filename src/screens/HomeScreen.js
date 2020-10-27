@@ -3,8 +3,9 @@ import React, { useState, useEffect } from 'react'
 import InfoBox from '../components/InfoBox';
 import LineGraph from '../components/LineGraph';
 import TableCountries from '../components/TableCountries';
-import { Container, Row, Col, Form, InputGroup } from 'react-bootstrap';
-import { formatData, sortData } from '../util';
+import Map from '../components/Map';
+import { Container, Row, Col, Form } from 'react-bootstrap';
+import { formatData, sortData, cleanMapData } from '../util';
 import '../css/homeScreen.css';
 import numeral from 'numeral';
 
@@ -19,6 +20,9 @@ function HomeScreen () {
     const [typeData, setTypeData] = useState('acumulado');
     const [typeCases, setTypeCases] = useState('confirmed');
     const [dataTable, setDataTable] = useState([]);
+    const [mapCenter, setMapCenter] = useState({ lat: 34.80745, lng: -40.4796 });
+    const [mapZoom, setMapZoom] = useState(2);   
+    const [mapCountries, setMapCountries] = useState([]);
 
     // Obtención de los datos globales
     useEffect(() => {
@@ -51,6 +55,19 @@ function HomeScreen () {
                 setCountries(countries);
                 const sortedData = sortData(data.data);
                 setDataTable(sortedData)
+
+                const mapData = data.data.map((country) => (
+                    {
+                        name: country.name,
+                        latitude: country.coordinates.latitude,
+                        longitude: country.coordinates.longitude,
+                        confirmed: country.latest_data.confirmed,
+                        recovered: country.latest_data.recovered,
+                        deaths: country.latest_data.deaths
+                    }
+                ))
+                const mapDataClean = cleanMapData(mapData);
+                setMapCountries(mapDataClean);
             })
         }
         getCountriesData(); 
@@ -123,6 +140,9 @@ function HomeScreen () {
                     setDate(formatData(currentInfo.updated_at));
                 }
             }         
+            // establecer las coordenadas del pais seleccionado
+            setMapCenter([data.data.coordinates.latitude, data.data.coordinates.longitude]);
+            setMapZoom(4);
         });      
     }
    
@@ -163,7 +183,9 @@ function HomeScreen () {
                                             typeCases="confirmed"
                                             currentCases={numeral(currentCountryInfo.confirmed).format("0,0")}
                                             previousCases={numeral(previousCountryInfo.confirmed).format("0,0")}
-                                            increasePercentCases={numeral((currentCountryInfo.confirmed - previousCountryInfo.confirmed) / previousCountryInfo.confirmed).format("0.0%")}
+                                            increasePercentCases={numeral((currentCountryInfo.confirmed - previousCountryInfo.confirmed) / previousCountryInfo.confirmed).format("0.0%")}                                         
+                                            currentDate={currentCountryInfo.date}
+                                            previousDate={previousCountryInfo.date}
                                             onClick={(e) => (
                                                 setTypeCases('confirmed')
                                             )}                                                                         
@@ -179,7 +201,9 @@ function HomeScreen () {
                                             typeCases="confirmed"
                                             currentCases={numeral(currentCountryInfo.new_confirmed).format("0,0")}
                                             previousCases={numeral(previousCountryInfo.new_confirmed).format("0,0")}
-                                            increasePercentCases={numeral((currentCountryInfo.new_confirmed - previousCountryInfo.new_confirmed) / previousCountryInfo.new_confirmed).format("0.0%")}
+                                            increasePercentCases={numeral((currentCountryInfo.new_confirmed - previousCountryInfo.new_confirmed) / previousCountryInfo.new_confirmed).format("0.0%")}                                        
+                                            currentDate={currentCountryInfo.date}
+                                            previousDate={previousCountryInfo.date}
                                             onClick={(e) => setTypeCases('confirmed')}     
                                         /> 
                                        <LineGraph
@@ -198,7 +222,9 @@ function HomeScreen () {
                                             typeCases="recovered"
                                             currentCases={numeral(currentCountryInfo.recovered).format("0,0")}
                                             previousCases={numeral(previousCountryInfo.recovered).format("0,0")}
-                                            increasePercentCases={numeral((currentCountryInfo.recovered - previousCountryInfo.recovered) / previousCountryInfo.recovered).format("0.0%")}
+                                            increasePercentCases={numeral((currentCountryInfo.recovered - previousCountryInfo.recovered) / previousCountryInfo.recovered).format("0.0%")}                                        
+                                            currentDate={currentCountryInfo.date}
+                                            previousDate={previousCountryInfo.date}
                                             onClick={(e) => setTypeCases('recovered')}                                                           
                                         />   
                                         <LineGraph
@@ -212,7 +238,9 @@ function HomeScreen () {
                                             typeCases="recovered"
                                             currentCases={numeral(currentCountryInfo.new_recovered).format("0,0")}
                                             previousCases={numeral(previousCountryInfo.new_recovered).format("0,0")}
-                                            increasePercentCases={numeral((currentCountryInfo.new_recovered - previousCountryInfo.new_recovered) / previousCountryInfo.new_recovered).format("0.0%")}
+                                            increasePercentCases={numeral((currentCountryInfo.new_recovered - previousCountryInfo.new_recovered) / previousCountryInfo.new_recovered).format("0.0%")}                                        
+                                            currentDate={currentCountryInfo.date}
+                                            previousDate={previousCountryInfo.date}
                                             onClick={(e) => setTypeCases('recovered')}   
                                         />  
                                         <LineGraph
@@ -232,7 +260,9 @@ function HomeScreen () {
                                             typeCases="deaths"
                                             currentCases={numeral(currentCountryInfo.deaths).format("0,0")}
                                             previousCases={numeral(previousCountryInfo.deaths).format("0,0")}
-                                            increasePercentCases={numeral((currentCountryInfo.deaths - previousCountryInfo.deaths) / previousCountryInfo.deaths).format("0.0%")}
+                                            increasePercentCases={numeral((currentCountryInfo.deaths - previousCountryInfo.deaths) / previousCountryInfo.deaths).format("0.0%")}                                        
+                                            currentDate={currentCountryInfo.date}
+                                            previousDate={previousCountryInfo.date}
                                             onClick={(e) => setTypeCases('deaths')}                                                                        
                                         />
                                         <LineGraph
@@ -246,7 +276,9 @@ function HomeScreen () {
                                             typeCases="deaths"
                                             currentCases={numeral(currentCountryInfo.new_deaths).format("0,0")}
                                             previousCases={numeral(previousCountryInfo.new_deaths).format("0,0")}
-                                            increasePercentCases={numeral((currentCountryInfo.new_deaths - previousCountryInfo.new_deaths) / previousCountryInfo.new_deaths).format("0.0%")}
+                                            increasePercentCases={numeral((currentCountryInfo.new_deaths - previousCountryInfo.new_deaths) / previousCountryInfo.new_deaths).format("0.0%")}                                        
+                                            currentDate={currentCountryInfo.date}
+                                            previousDate={previousCountryInfo.date}
                                             onClick={(e) => setTypeCases('deaths')}     
                                         /> 
                                         <LineGraph
@@ -260,7 +292,15 @@ function HomeScreen () {
                         </Col>
                     </Row>
                 </Col>
-                <Col xs={12} xl={8} className="map order-1 order-md-2 order-xl-1 px-0">Mapa</Col>
+                <Col xs={12} xl={8} className="map order-1 order-md-2 order-xl-1 px-0">
+                    <Map
+                        center={mapCenter}
+                        zoom={mapZoom}
+                        typeCases={typeCases}
+                        countries={mapCountries}
+                    />
+                    
+                </Col>
                 <Col xs={12} md={6} xl={4} className="tabla order-2 order-md-1 order-xl-2 px-0">
                     <Row className="d-flex flex-column align-self-start align mx-0">
                         { ((typeCases === 'confirmed') && <h5 className="text-center mt-3 mt-md-0">Casos Positivos Acumulados</h5>)
