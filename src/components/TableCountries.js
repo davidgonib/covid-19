@@ -4,6 +4,7 @@ import numeral from 'numeral';
 
 import '../css/tableCountries.css';
 
+/* Tabla con los datos por paises */
 function TableCountries({ countries, typeCases }) {
     return (
         <Table borderless striped hover size="sm" className="dataTable overflow-auto w-100">

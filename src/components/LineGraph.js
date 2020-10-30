@@ -2,13 +2,14 @@ import React from 'react';
 import { Line } from 'react-chartjs-2';
 import numeral from 'numeral';
 
+// Opciones de la gráfica
 const options = {
     legend: {
-        display: false,
+        display: false, // Sin leyenda
     },
     elements: {
         point: {
-            radius: 1
+            radius: 1 // Radio del punto que representa un dato
         },
     },
     maintainAspectRadio: false,
@@ -46,9 +47,11 @@ const options = {
     }
 };  
 
+/* Gráfica */
 function LineGraph(props) {
 
-    const buildChartData = (data, typeCases) => {      
+    // Extraer los datos (fecha y cantidad en función del tipo de caso)
+    const buildChartData = (data, typeCases) => {   
         const chartData = [];
         data.forEach(day => {
             const newDataPoint = {
@@ -56,7 +59,8 @@ function LineGraph(props) {
                 y: day[typeCases]
             }
             chartData.push(newDataPoint);
-        })
+        });
+        
         return chartData;
     }
     
@@ -70,8 +74,7 @@ function LineGraph(props) {
                     data={{
                         datasets: [
                             {
-                                backgroundColor: "rgba(204, 16, 52, 0.5)",
-                                borderColor: "CC1034",
+                                backgroundColor: props.backgroundColor,
                                 data: chartData,
                             }
                         ]

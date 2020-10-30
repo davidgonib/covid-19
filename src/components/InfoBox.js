@@ -4,8 +4,10 @@ import '../css/infoBox.css';
 import { Card } from 'react-bootstrap';
 import { getDays } from '../util';
 
+/* Card Info */
 function InfoBox(props) {
     
+    // Obtención de la diferencia en días entre las fechas del último y penúltimo dato
     const daysFromLastData = getDays(props.currentDate, props.previousDate)
 
     return (

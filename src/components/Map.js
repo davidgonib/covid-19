@@ -9,6 +9,7 @@ import {
 
 import '../css/map.css';
 
+/* Mapa */
 function Map({ countries, typeCases, center, zoom }) {
     return (
         <div className="map">
