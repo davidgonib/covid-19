@@ -95,6 +95,10 @@ function HomeScreen () {
                 setCountryInfo(info)
                 setCurrentCountryInfo(currentInfo);
                 setPreviousCountryInfo(previousInfo); // Datos Globales
+                // establecer las coordenadas del pais seleccionado
+                setMapCenter({ lat: 34.80745, lng: -40.4796 });
+                // Establecer zoom
+                setMapZoom(3);
             // Opción seleccionada: cualquier país
             } else {
                 // Para países sin datos
@@ -140,11 +144,12 @@ function HomeScreen () {
                     setPreviousCountryInfo(previousInfo);
                     setDate(formatData(currentInfo.updated_at));
                 }
+                // establecer las coordenadas del pais seleccionado
+                setMapCenter([data.data.coordinates.latitude, data.data.coordinates.longitude]);
+                // Establecer zoom
+                setMapZoom(4);
             }         
-            // establecer las coordenadas del pais seleccionado
-            setMapCenter([data.data.coordinates.latitude, data.data.coordinates.longitude]);
-            // Establecer zoom
-            setMapZoom(4);
+            
         });      
     }
     
@@ -302,7 +307,7 @@ function HomeScreen () {
                                     ? <div>
                                         {/* Info Card*/}
                                         <InfoBox 
-                                            title="Casos Falledidos Acumulados"
+                                            title="Casos Fallecidos Acumulados"
                                             typeCases="deaths"
                                             currentCases={numeral(currentCountryInfo.deaths).format("0,0")}
                                             previousCases={numeral(previousCountryInfo.deaths).format("0,0")}
@@ -327,7 +332,7 @@ function HomeScreen () {
                                     : <div>     
                                         {/* Info Card*/}
                                         <InfoBox 
-                                            title="Casos Falledidos Nuevos"
+                                            title="Casos Fallecidos Nuevos"
                                             typeCases="deaths"
                                             currentCases={numeral(currentCountryInfo.new_deaths).format("0,0")}
                                             previousCases={numeral(previousCountryInfo.new_deaths).format("0,0")}
