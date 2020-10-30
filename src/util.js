@@ -3,6 +3,7 @@ import moment from 'moment';
 import numeral from 'numeral';
 import { Circle, Popup } from 'react-leaflet';
 
+// Opciones en función del tipo de caso
 const casesTypeColors = {
     confirmed: {
         hex: "#CC1034",
@@ -44,18 +45,17 @@ export const formatData = date => {
     }
 };
 
+// Ordenar de mayor a menor los datos de la tabla
 export const sortData = (data) => {
     const sortedData = [...data];
     return sortedData.sort((a,b) => a.latest_data.confirmed > b.latest_data.confirmed ? -1 : 1);
 };
 
+// Obtener la diferencia en días entre las fechas del último y penúltimo dato
 export const getDays = (currentDate, previousDate) => {
-
     const currentDateMoment = moment(currentDate);  
     const previousDateMoment = moment(previousDate);
-
     const numberDays = currentDateMoment.diff(previousDateMoment, 'days');
-
     return numberDays;
 }
 
@@ -79,10 +79,10 @@ export const showDataOnMap = (data, typeCases='confirmed') => (
          >
              <Popup>
                  <div className="">
-                     <div>{country.name}</div>
-                     <div className="">Cases: {numeral(country.confirmed).format("0,0")}</div>
-                     <div className="">Recovered: {numeral(country.recovered).format("0,0")}</div>
-                     <div className="">Deaths: {numeral(country.deaths).format("0,0")}</div>
+                     <div className="font-weight-bold">{country.name}</div>
+                     <div className="">Confirmados: {numeral(country.confirmed).format("0,0")}</div>
+                     <div className="">Recuperados: {numeral(country.recovered).format("0,0")}</div>
+                     <div className="">Fallecidos: {numeral(country.deaths).format("0,0")}</div>
                  </div>
              </Popup>
          </Circle>     
